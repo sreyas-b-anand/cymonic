@@ -3,22 +3,23 @@ from agents import FactAgent, WriterAgent, EditorAgent
 from services.llm_services import GroqClient
 from langgraph.graph import StateGraph, END
 from schemas.graph import GraphState
-
+from config import SupabaseConfig
 logger = logging.getLogger(__name__)
 
 ALL_PIECES = ["blog_post", "social_thread", "email_teaser"]
-MAX_ITERATIONS = 3
+MAX_ITERATIONS = 2
 
 
 class AgentPipeline:
     def __init__(self):
-        # Use 70b — 8b hits token limit on writer prompt
-        groq_client = GroqClient(model="llama-3.3-70b-versatile")
+        
+        groq_client = GroqClient(model="llama-3.1-8b-instant")
 
         self.fact_agent = FactAgent(groq_client)
         self.writer_agent = WriterAgent(groq_client)
         self.editor_agent = EditorAgent(groq_client)
 
+        self.supabase = SupabaseConfig()
         self._build_graph()
 
 
@@ -103,7 +104,7 @@ class AgentPipeline:
                 fact_sheet=state.get("fact_sheet", {})
             )
 
-            # ── FIX: revise() returns {"piece_name": content} — extract the value
+            
             if result and "error" not in result and piece in result:
                 drafts[piece] = result[piece]
                 logger.info("revise_node: %s revised successfully", piece)
@@ -163,4 +164,16 @@ class AgentPipeline:
 
         logger.info("pipeline_completed: status=%s iterations=%d",
                     result.get("status"), result.get("iterations", 0))
+        
+        try:
+            self.supabase.client.table("campaigns").insert({
+                "input_text": source_text,
+                "output": result,
+                "status": result.get("status", ""),
+                "error": result.get("feedback", ""),
+                "iterations": result.get("iterations", 0)
+            }).execute()
+        except Exception as e:
+            logger.error("Error occurred while inserting into Supabase: %s", e)
+        
         return result
