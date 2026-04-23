@@ -7,7 +7,7 @@ from dotenv import load_dotenv
 
 load_dotenv()
 
-app = FastAPI(title="Cymonic FastAPI")
+app = FastAPI(title="Orkestr.ai FastAPI")
 
 app.add_middleware(
     CORSMiddleware,

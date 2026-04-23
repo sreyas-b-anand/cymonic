@@ -68,7 +68,7 @@ export default function Sidebar({
               exit={{ opacity: 0, width: 0 }}
               className="text-lg font-semibold tracking-tight gradient-text overflow-hidden whitespace-nowrap"
             >
-              Cymonic
+              Orkestr.ai
             </motion.span>
           )}
         </Link>

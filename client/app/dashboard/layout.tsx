@@ -50,7 +50,7 @@ export default function DashboardLayout({
             </button>
           </SheetTrigger>
           <span className="ml-3 text-sm font-semibold gradient-text">
-            Cymonic
+            Orkestr.ai
           </span>
         </div>
         <SheetContent

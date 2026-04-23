@@ -11,7 +11,7 @@ const inter = Inter({
 });
 
 export const metadata: Metadata = {
-  title: "Cymonic — AI Campaign Generator",
+  title: "Orkestr.ai — AI Campaign Generator",
   description:
     "Generate fact-checked, multi-format marketing campaigns with AI agents that collaborate in real time.",
 };
